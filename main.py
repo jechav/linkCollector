@@ -8,11 +8,15 @@ import requests
 import sys, pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-if len(sys.argv) < 3: sys.exit()
+if len(sys.argv) < 3:
+    print(colored('Usage ', 'white'))
+    print(colored('python main.py [season] [chapter] [lenguague = sub] [server = openload]', 'white'))
+    print(colored('lenguague: sub, lat, es', 'white'))
+    print(colored('servers: openload, flashx, streamin, nowvideo', 'white'))
+    sys.exit()
 
 ROOT = "http://seriesblanco.com"
 URL = ROOT+"/serie/1697/temporada-{}/capitulo-{}/the-flash.html".format(sys.argv[1], sys.argv[2])
-print(colored(URL, 'blue'))
 
 class flags:
     sub = 'http://seriesblanco.com/banderas/vos.png'
@@ -25,11 +29,11 @@ class servers:
     streamin = '/servidores/streamin.to.jpg'
     nowvideo = '/servidores/nowvideo.png'
 
-LENGUAGUE = flags.sub
-SERVER = servers.openload
+LENGUAGUE = getattr(flags, sys.argv[3]) if len(sys.argv) > 3 else flags.sub
+SERVER = getattr(servers, sys.argv[4]) if len(sys.argv) > 4 else servers.openload
 
-
-URLS = []
+print( colored(URL, 'blue') )
+print( colored(LENGUAGUE+' - '+SERVER, 'white') )
 
 def main():
     tmpURLS = []
@@ -49,9 +53,6 @@ def main():
         vUrl =  getUrl2(url)
         av = checkUp(vUrl)
         print(colored(vUrl, 'green' if av else 'red'))
-        # URLS.append( {'url':vUrl, 'valid':av} )
-
-    # pp.pprint(URLS)
 
 def getUrl2(url):
     tt = requests.get(url)
@@ -64,7 +65,7 @@ def getUrl2(url):
 def checkUp(url):
     tt = requests.get(url)
     soup = Soup(tt.content,  'html.parser')
-    return soup.find('video') <> None
+    return soup.find('video') != None
 
 
 main()
