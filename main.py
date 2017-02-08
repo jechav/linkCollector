@@ -16,4 +16,8 @@ URL = ROOT+"/serie/1653/temporada-{}/capitulo-{}/rick-and-morty.html"
 URL_TREE = ROOT+"/serie/526/supernatural-sobrenatural.html"
 URL = ROOT+"/serie/526/temporada-{}/capitulo-{}/supernatural-sobrenatural.html"
 
+URL_TREE = ROOT+"/serie/1531/black_sails.html"
+URL = ROOT+"/serie/1531/temporada-{}/capitulo-{}/black_sails.html"
+
+
 main(sys.argv, ROOT, URL_TREE, URL)

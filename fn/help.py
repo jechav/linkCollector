@@ -6,9 +6,13 @@ import requests
 
 def getUrl(URL, ROOT, LENGUAGUE, SERVER):
     tmpURLS = []
-    tt = requests.get(URL)
+    tt = _REQUEST(URL)
+    if not tt: return False
     soup = Soup(tt.content,  'html.parser')
     trs = soup.find('table', {'class': 'table-Hover'}).find_all('tr')
+    if LENGUAGUE == 'all':
+        return _deepGet(ROOT, trs)
+
     for ind, t in enumerate(trs):
         tds = t.find_all('td')
         img = tds[1].find('img')
@@ -22,8 +26,31 @@ def getUrl(URL, ROOT, LENGUAGUE, SERVER):
         av = _checkUp(vUrl)
         print(colored(vUrl, 'green' if av else 'red'))
 
+    if(len(tmpURLS) < 1): _deepGet(ROOT, trs) # call deepget if no result for lenguague and serv
+
+def _deepGet(ROOT, trs):
+    flag = None
+    for ind, t in enumerate(trs):
+        tds = t.find_all('td')
+        img = tds[1].find('img')
+        img2 = tds[2].find('img')
+        if img and img2:
+            if flag <> img.get('src'):
+                flag = img.get('src')
+                print(colored(flag, 'cyan'))
+
+            url = ROOT+tds[2].find('a').get('href')
+            vUrl =  _getUrl2(url)
+            av = _checkUp(vUrl)
+            print(colored(vUrl, 'green' if av else 'red'))
+
+
+
+
+
 def _getUrl2(url):
-    tt = requests.get(url)
+    tt = _REQUEST(url)
+    if not tt: return False
     soup = Soup(tt.content,  'html.parser')
     btn = soup.find('input', {'type': 'button'})
     enlace = btn.get('onclick')
@@ -31,12 +58,14 @@ def _getUrl2(url):
     return enlace.split('"')[1]
 
 def _checkUp(url):
-    tt = requests.get(url)
+    tt = _REQUEST(url);
+    if not tt: return False
     soup = Soup(tt.content,  'html.parser')
     return soup.find('video') != None
 
 def tree(URLTREE):
-    tt = requests.get(URLTREE)
+    tt = _REQUEST(URLTREE)
+    if not tt: return False
     soup = Soup(tt.content,  'html.parser')
     seasons = soup.findAll('div', {'class': 'panel-collapse'})
     chapters = soup.findAll('tr', {'class': 'table-hover'})
@@ -53,3 +82,15 @@ def _getChapters(s, chapters):
         if c.text.strip().split('x')[0] == str(s):
             n.append(c.find('a').get('href'))
     return n
+
+def _REQUEST(url):
+    try:
+        return requests.get(url)
+    except requests.exceptions.Timeout:
+        print(colored('Timeout', 'red'))
+    except requests.exceptions.TooManyRedirects:
+        print(colored('TooManyRedirects', 'red'))
+    except requests.exceptions.RequestException as e:
+        print(colored('RequestException', 'red'))
+
+    return False;
