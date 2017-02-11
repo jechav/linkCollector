@@ -25,13 +25,12 @@ def getUrl(URL, ROOT, LENGUAGUE, SERVER):
 
     for ind, url in enumerate(tmpURLS):
         vUrl =  _getUrl2(url)
-        av = _checkUp(vUrl, SERVER)
-        print(colored(vUrl, 'green' if av else 'red'))
+        print(colored(vUrl, _getColor( _checkUp(vUrl, img2.get('src')) )))
 
     if(len(tmpURLS) < 1): _deepGet(ROOT, trs) # call deepget if no result for lenguague and serv
 
 def _deepGet(ROOT, trs):
-    print(colored('NO RESULTS!!! GOING DEEP', 'cyan'))
+    print(colored('GOING DEEP !!!!!', 'cyan'))
     flag = None
     for ind, t in enumerate(trs):
         tds = t.find_all('td')
@@ -44,8 +43,7 @@ def _deepGet(ROOT, trs):
 
             url = ROOT+tds[2].find('a').get('href')
             vUrl =  _getUrl2(url)
-            av = _checkUp(vUrl, img2.get('src'))
-            print(colored(vUrl, 'green' if av else 'red'))
+            print(colored(vUrl, _getColor( _checkUp(vUrl, img2.get('src')) )))
 
 
 
@@ -61,9 +59,10 @@ def _getUrl2(url):
     return enlace.split('"')[1]
 
 def _checkUp(url, server):
+    if server not in {Servers.streamin, Servers.streamplay, Servers.openload}: return -1
     # print(server)
     tt = _REQUEST(url);
-    if not tt: return False
+    if not tt: return -1
     soup = Soup(tt.content,  'html.parser')
 
     if server == Servers.openload:
@@ -71,6 +70,11 @@ def _checkUp(url, server):
 
     if server in {Servers.streamin, Servers.streamplay}:
         return soup.find("input", {"id": "btn_download"}) != None
+
+def _getColor(v):
+    if v == -1: return 'white'
+    if v: return 'green'
+    return 'red'
 
 
 
