@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup as Soup
 from termcolor import colored
 import requests
 
+from var import servers as Servers
+
 def getUrl(URL, ROOT, LENGUAGUE, SERVER):
     tmpURLS = []
     tt = _REQUEST(URL)
@@ -23,12 +25,13 @@ def getUrl(URL, ROOT, LENGUAGUE, SERVER):
 
     for ind, url in enumerate(tmpURLS):
         vUrl =  _getUrl2(url)
-        av = _checkUp(vUrl)
+        av = _checkUp(vUrl, SERVER)
         print(colored(vUrl, 'green' if av else 'red'))
 
     if(len(tmpURLS) < 1): _deepGet(ROOT, trs) # call deepget if no result for lenguague and serv
 
 def _deepGet(ROOT, trs):
+    print(colored('NO RESULTS!!! GOING DEEP', 'cyan'))
     flag = None
     for ind, t in enumerate(trs):
         tds = t.find_all('td')
@@ -37,11 +40,11 @@ def _deepGet(ROOT, trs):
         if img and img2:
             if flag <> img.get('src'):
                 flag = img.get('src')
-                print(colored(flag, 'cyan'))
+                print(colored(flag, 'cyan')) # print lenguague flag
 
             url = ROOT+tds[2].find('a').get('href')
             vUrl =  _getUrl2(url)
-            av = _checkUp(vUrl)
+            av = _checkUp(vUrl, img2.get('src'))
             print(colored(vUrl, 'green' if av else 'red'))
 
 
@@ -57,11 +60,19 @@ def _getUrl2(url):
     # print(enlace)
     return enlace.split('"')[1]
 
-def _checkUp(url):
+def _checkUp(url, server):
+    # print(server)
     tt = _REQUEST(url);
     if not tt: return False
     soup = Soup(tt.content,  'html.parser')
-    return soup.find('video') != None
+
+    if server == Servers.openload:
+        return soup.find('video') != None
+
+    if server in {Servers.streamin, Servers.streamplay}:
+        return soup.find("input", {"id": "btn_download"}) != None
+
+
 
 def tree(URLTREE):
     tt = _REQUEST(URLTREE)

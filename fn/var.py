@@ -11,3 +11,4 @@ class servers:
     flashx = '/servidores/flashx.jpg'
     streamin = '/servidores/streamin.to.jpg'
     nowvideo = '/servidores/nowvideo.png'
+    streamplay = '/servidores/streamplay.jpg'
