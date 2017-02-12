@@ -25,7 +25,7 @@ def getUrl(URL, ROOT, LENGUAGUE, SERVER):
 
     for ind, url in enumerate(tmpURLS):
         vUrl =  _getUrl2(url)
-        print(colored(vUrl, _getColor( _checkUp(vUrl, img2.get('src')) )))
+        print(colored(vUrl, _getColor( _checkUp(vUrl, SERVER) )))
 
     if(len(tmpURLS) < 1): _deepGet(ROOT, trs) # call deepget if no result for lenguague and serv
 
@@ -59,8 +59,8 @@ def _getUrl2(url):
     return enlace.split('"')[1]
 
 def _checkUp(url, server):
-    if server not in {Servers.streamin, Servers.streamplay, Servers.openload}: return -1
     # print(server)
+    if server not in {Servers.streamin, Servers.streamplay, Servers.openload}: return -1
     tt = _REQUEST(url);
     if not tt: return -1
     soup = Soup(tt.content,  'html.parser')
