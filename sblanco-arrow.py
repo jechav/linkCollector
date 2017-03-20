@@ -22,7 +22,5 @@ URL = ROOT+"/serie/1531/temporada-{}/capitulo-{}/black_sails.html"
 URL_TREE = ROOT+"/serie/1051/arrow.html"
 URL = ROOT+"/serie/1051/temporada-{}/capitulo-{}/arrow.html"
 
-URL_TREE = ROOT+"/serie/226/friends.html"
-URL = ROOT+"/serie/226/temporada-{}/capitulo-{}/friends.html"
 
 main(sys.argv, ROOT, URL_TREE, URL)
