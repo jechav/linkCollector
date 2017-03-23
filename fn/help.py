@@ -50,7 +50,10 @@ def _deepGet(ROOT, trs):
 
 
 def _getUrl2(url):
-    tt = _REQUEST(url)
+    s = url.split('/')
+    base = 'http://seriesblanco.com/ajax/load_enlace.php'
+    parms = '?serie={0}&temp={1}&cap={2}&id={3}'.format(s[4], s[5], s[6], s[7])
+    tt = _REQUEST(base+parms)
     if not tt: return False
     soup = Soup(tt.content,  'html.parser')
     btn = soup.find('input', {'type': 'button'})
@@ -109,3 +112,12 @@ def _REQUEST(url):
         print(colored('RequestException', 'red'))
 
     return False;
+
+
+from subprocess import PIPE, Popen
+def saveHistory():
+    command = 'history | tail -1 | cut -c 8-'
+    print(colored(command, 'blue')); #DEBUG
+    p = Popen(command, shell=True, stdin=PIPE, stdout=PIPE)
+    out, err = p.communicate(); # wait to completation
+    print(out)

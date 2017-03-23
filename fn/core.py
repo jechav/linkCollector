@@ -4,7 +4,7 @@ import sys, getopt
 from termcolor import colored
 
 from var import flags, servers
-from help import getUrl, tree
+from help import getUrl, tree, saveHistory
 
 def main(argv, ROOT, URL_TREE, URL):
     # print(len(argv))
@@ -34,6 +34,9 @@ def main(argv, ROOT, URL_TREE, URL):
     print( colored(URL, 'blue') )
     print( colored(LENGUAGUE+' - '+SERVER, 'white') )
     getUrl(URL, ROOT, LENGUAGUE, SERVER)
+
+    # saveHistory()
+    # 'history | cut -c 8- | grep "^sblanco-" '
 
 def error():
     print('Usage:  ')
