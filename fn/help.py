@@ -85,21 +85,23 @@ def tree(URLTREE):
     tt = _REQUEST(URLTREE)
     if not tt: return False
     soup = Soup(tt.content,  'html.parser')
-    seasons = soup.findAll('div', {'class': 'panel-collapse'})
-    chapters = soup.findAll('tr', {'class': 'table-hover'})
+    seasons = soup.findAll('a', {'class': 'panel-title'})
 
-    print(colored('Temporadas {} - Capitulos {}'.format(len(seasons), len(chapters)), 'green'))
+    print(colored('Temporadas {}'.format(len(seasons)), 'green'))
+    seriesnumber = URLTREE.split('/')[4]
 
     for ind, s in enumerate(seasons):
-        links = _getChapters(ind+1, chapters)
-        print(colored('Temporada {} - {}'.format(ind+1, len(links)), 'blue'))
+        links = _getChapters(seriesnumber, ind+1)
+        print(colored('Temporada {0} - {1}'.format(ind+1, len(links)), 'blue'))
 
-def _getChapters(s, chapters):
-    n = [];
-    for ind, c in enumerate(chapters):
-        if c.text.strip().split('x')[0] == str(s):
-            n.append(c.find('a').get('href'))
-    return n
+def _getChapters(s, seasons):
+    base = 'http://seriesblanco.com/ajax/visto3.php'
+    parms = '?season_id={0}&season_number={1}'.format(s, seasons)
+    tt = _REQUEST(base+parms)
+    soup = Soup(tt.content,  'html.parser')
+    links = soup.findAll('tr', {'class': 'table-hover'})
+
+    return links
 
 def _REQUEST(url):
     try:
